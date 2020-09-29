@@ -11,8 +11,22 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const generateRandomString = function() {
+  let alph = "abcdefghijklmnopqrstuvwxyz";
+  alph = alph.split('');
+  let out = [];
+  for (let i = 0; i < 6; i++) {
+    out.push(alph[Math.floor(Math.random() * 26)]);
+  }
+  return out.join('');
+};
+
 app.get("/", (req, res) => {
   res.send("Hello!");
+});
+
+app.get("/hello", (req, res) => {
+  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.get("/urls.json", (req, res) => {
@@ -38,10 +52,6 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
@@ -49,17 +59,15 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);         // Respond with 'Ok' (we will replace this)
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const sURL = req.params.shortURL;
+  delete urlDatabase[sURL];
+  res.redirect('/urls');
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-const generateRandomString = function() {
-  let alph = "abcdefghijklmnopqrstuvwxyz";
-  alph = alph.split('');
-  let out = [];
-  for (let i = 0; i < 6; i++) {
-    out.push(alph[Math.floor(Math.random() * 26)]);
-  }
-  return out.join('');
-};
+
 
