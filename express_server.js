@@ -18,12 +18,12 @@ const urlDatabase = {
 
 const users = {
   "abcdef": {
-    id: "userRandomID",
+    id: "abcdef",
     email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
   "ghijkl": {
-    id: "user2RandomID",
+    id: "abcdef",
     email: "user2@example.com",
     password: "dishwasher-funk"
   }
@@ -46,10 +46,10 @@ const generateRandomString = function() {
 const isAlreadyUser = (eMail) => {
   for (const id in users) {
     if (users[id].email === eMail) {
-      return true;
+      return id;
     }
   }
-  return false;
+  return undefined;
 };
 
 // **************************
@@ -68,13 +68,20 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get("/login", (req, res) => {
+  const user = users[req.cookies["user_id"]];
+  const templateVars = { user };
+  if (user) {
+    res.redirect("/urls");
+    console.log("Customer already logged in.");
+    return;
+  }
+  res.render("login", templateVars);
+});
+
 app.get("/register", (req, res) => {
   const user = users[req.cookies["user_id"]];
-  const error = req.cookies.error;
-  if (error) {
-    res.clearCookie("error")
-  }
-  const templateVars = { user, error };
+  const templateVars = { user };
   if (user) {
     res.redirect("/urls");
     console.log("Customer already logged in.");
@@ -110,24 +117,34 @@ app.get("/u/:shortURL", (req, res) => {
 // *       POST ROUTES
 // **************************
 
-// *************************************
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookie("username", username)
+  const {email, password} = req.body;
+  if (!email || !password) {
+    res.status(400).send('Please fill in all fields.');
+    return;
+  }
+  const id = isAlreadyUser(email);
+  if (!id) {
+    res.status(403).send('Invalid Email or Password');
+    return;
+  }
+  if (users[id].password !== password) {
+    res.status(403).send('Invalid Email or Password');
+    return;
+  }
+  
+  res.cookie("user_id", id)
     .redirect('/urls');
 });
-// *************************************
 
 app.post("/register", (req, res) => {
-  const {username, email, password} = req.body;
-  if (!username || !email || !password) {
-    res.cookie("error", "Please fill in all fields.")
-      .redirect("/register");
+  const {email, password} = req.body;
+  if (!email || !password) {
+    res.status(400).send('Please fill in all fields.');
     return;
   }
   if (isAlreadyUser(email)) {
-    res.cookie("error", "There is already a user with this email.")
-      .redirect("/register");
+    res.status(400).send('There is already a user with this email.');
     return;
   }
   // get a unique(unused) ID for the new user
@@ -135,7 +152,7 @@ app.post("/register", (req, res) => {
   while (users[id]) {
     id = generateRandomString();
   }
-  users[id] = {username, email, password};
+  users[id] = {id, email, password};
   res.cookie("user_id", id)
     .redirect('/urls');
 });
