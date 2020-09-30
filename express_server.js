@@ -23,8 +23,8 @@ const users = {
     password: "purple-monkey-dinosaur"
   },
   "ghijkl": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
 };
@@ -41,6 +41,15 @@ const generateRandomString = function() {
     out.push(alph[Math.floor(Math.random() * 26)]);
   }
   return out.join('');
+};
+
+const isAlreadyUser = (eMail) => {
+  for (const id in users) {
+    if (users[id].email === eMail) {
+      return true;
+    }
+  }
+  return false;
 };
 
 // **************************
@@ -61,7 +70,11 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/register", (req, res) => {
   const user = users[req.cookies["user_id"]];
-  const templateVars = { user };
+  const error = req.cookies.error;
+  if (error) {
+    res.clearCookie("error")
+  }
+  const templateVars = { user, error };
   if (user) {
     res.redirect("/urls");
     console.log("Customer already logged in.");
@@ -107,6 +120,16 @@ app.post("/login", (req, res) => {
 
 app.post("/register", (req, res) => {
   const {username, email, password} = req.body;
+  if (!username || !email || !password) {
+    res.cookie("error", "Please fill in all fields.")
+      .redirect("/register");
+    return;
+  }
+  if (isAlreadyUser(email)) {
+    res.cookie("error", "There is already a user with this email.")
+      .redirect("/register");
+    return;
+  }
   // get a unique(unused) ID for the new user
   let id = generateRandomString();
   while (users[id]) {
