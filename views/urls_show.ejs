@@ -8,26 +8,29 @@
 
   <body>
     <%- include('partials/_header') %>
-    <div class="card text-center">
+    <% if (!email) { %>
+      <h3>Please Log In Or Register To Access Your URLs</h3>
+    <% } else if (!correctUser) { %>
+      <h3>You Do Not Have Access To This URL</h3>
+    <% } else { %>
+      <div class="card text-center">
         <div class="card-header"></div>
         <div class="card-body">
           <h5 class="card-title">TinyURL for: <%= longURL %></h5>
           <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
-          </div>
+        </div>
           
-            
-
-        
-      <div class="card-footer text-muted center-block">
-        <form class="form-inline d-flex justify-content-center" action="/urls/<%= shortURL %>/edit" method="POST">
-          <div class="form-group mb-2">
-            <label for="longURL">Edit the URL</label>
-            <input class="form-control" type="text" name="longURL" placeholder="<%= longURL %>" style="width: 300px; margin: 1em">
-            <button type="submit" class="btn-primary">Submit</button>
-          </div>
-        </form>
+        <div class="card-footer text-muted center-block">
+          <form class="form-inline d-flex justify-content-center" action="/urls/<%= shortURL %>/edit" method="POST">
+            <div class="form-group mb-2">
+              <label for="longURL">Edit the URL</label>
+              <input class="form-control" type="text" name="longURL" placeholder="<%= longURL %>" style="width: 300px; margin: 1em">
+              <button type="submit" class="btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    <% } %>
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

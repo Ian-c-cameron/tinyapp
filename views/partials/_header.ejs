@@ -10,7 +10,7 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if (!user) { %>
+    <% if (!email) { %>
       <form class="form-inline d-flex justify-content-right" action="/login" method="GET">
         <label for="logout" style="padding: 5px;">Please Login or Register</label>
         <button type="submit" class="btn btn-outline-light" name="logout">Login</button>
@@ -20,7 +20,7 @@
       </form>
     <% } else { %>
       <form class="form-inline d-flex justify-content-right" action="/logout" method="POST">
-        <label for="logout" style="padding: 5px;">Welcome Back <%= user.email %></label>
+        <label for="logout" style="padding: 5px;">Welcome Back <%= email %></label>
         <button type="submit" class="btn btn-outline-light" name="logout">Logout</button>
       </form>
     <% } %>
