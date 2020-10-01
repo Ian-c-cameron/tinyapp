@@ -11,41 +11,38 @@
   <body>
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
-      <% if (!user) { %>
-        <h3>Please Log In Or Register To Access Your URLs</h3>
-      <% } else { %>
-        <h3>My URLs</h3>
-        <table class="table">
-          <thread>
+      <h3>My URLs</h3>
+      <form method="GET" action="/urls/new">
+        <button type="submit" class="btn btn-outline-success">Add New URL</button>
+      </form>
+      <table class="table">
+        <thread>
+          <tr>
+            <th scope="col">Short URL</th>
+            <th scope="col">Long URL</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thread>
+        <tbody>
+          <% for(let url in urls) { %>
             <tr>
-              <th scope="col">Short URL</th>
-              <th scope="col">Long URL</th>
-              <th scope="col">Edit</th>
-              <th scope="col">Delete</th>
+              <td><%= url %></td>
+              <td><%= urls[url].longURL %></td>
+              <td>
+                <form method="POST" action="/urls/<%= url %>">
+                  <button type="submit" class="btn btn-outline-primary">Edit</button>
+                </form>
+              </td>
+              <td>
+                <form method="POST" action="/urls/<%= url %>/delete">
+                  <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
+              </td>
             </tr>
-          </thread>
-          <tbody>
-            <% for(let url in urls) { %>
-              <% if (user === urls[url].userID) { %>
-              <tr>
-                <td><%= url %></td>
-                <td><%= urls[url].longURL %></td>
-                <td>
-                  <form method="POST" action="/urls/<%= url %>">
-                    <button type="submit" class="btn btn-outline-primary">Edit</button>
-                  </form>
-                </td>
-                <td>
-                  <form method="POST" action="/urls/<%= url %>/delete">
-                    <button type="submit" class="btn btn-outline-danger">Delete</button>
-                  </form>
-                </td>
-              </tr>
-              <% } %>
-            <% } %>
-          </tbody>
-        </table>
-      <% } %>
+          <% } %>
+        </tbody>
+      </table>
     </main>
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
