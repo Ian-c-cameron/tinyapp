@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <title>URL - TinyApp Example</title>
   </head>
-
   <body>
     <%- include('partials/_header') %>
     <div class="card text-center">
@@ -13,9 +12,15 @@
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
+        <p class="card-text">Created: <%= date %></p>
+        <p class="card-text">Number of Visits: <%= numVisits %></p>
+        <p class="card-text">Number of Unique Visitors: <%= numVisitors %></p>
+        <% for (let visit of visits) { %>
+          <p class="card-text">Visitor: <%= visit[0] %> Timestamp: <%= visit[1] %></p>
+        <% } %>
       </div>
       <div class="card-footer text-muted center-block">
-        <form class="form-inline d-flex justify-content-center" action="/urls/<%= shortURL %>/edit" method="POST">
+        <form class="form-inline d-flex justify-content-center" action="/urls/<%= shortURL %>?_method=PUT" method="POST">
           <div class="form-group mb-2">
             <label for="longURL">Edit the URL</label>
             <input class="form-control" type="text" name="longURL" placeholder="<%= longURL %>" style="width: 300px; margin: 1em">
